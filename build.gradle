@@ -31,6 +31,10 @@ repositories {
     maven { url "https://www.jetbrains.com/intellij-repository/releases" }
 }
 
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
 dependencies {
     // Choose Jingle version: https://jitpack.io/#DuncanRuns/Jingle/
     implementation 'com.github.DuncanRuns:Jingle:v1.0.0'
