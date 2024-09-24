@@ -16,13 +16,16 @@ import xyz.duncanruns.jingle.gui.JingleGUI;
 import xyz.duncanruns.jingle.plugin.PluginManager;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 
 import static me.marin.statsplugin.util.VersionUtil.CURRENT_VERSION;
 
@@ -51,13 +54,12 @@ public class StatsPlugin {
     public static void initialize() {
         Jingle.log(Level.INFO, "(StatsPlugin) Running StatsPlugin v" + CURRENT_VERSION + "!");
 
-
-        if (!STATS_FOLDER_PATH.toFile().exists()) {
-            // TODO: Import existing Julti settings to prevent double setup
-            Jingle.log(Level.INFO, "(StatsPlugin) Importing Julti settings!");
-        }
-
+        boolean isFirstLaunch = !STATS_FOLDER_PATH.toFile().exists();
         STATS_FOLDER_PATH.toFile().mkdirs();
+
+        if (isFirstLaunch) {
+            UpdateUtil.importSettingsFromJulti();
+        }
 
         OBSOverlayGUI.createDefaultFile();
 

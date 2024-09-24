@@ -23,6 +23,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+import static me.marin.statsplugin.StatsPlugin.*;
 
 /**
  * Majority of the code from <a href="https://github.com/DuncanRuns/Jingle/blob/main/src/main/java/xyz/duncanruns/jingle/JingleUpdater.java">Jingle</a>
@@ -113,6 +116,54 @@ public class UpdateUtil {
         JProgressBar bar = new UpdateProgressFrame(location).getBar();
         bar.setMaximum((int) GrabUtil.getFileSize(download));
         GrabUtil.download(download, newJarPath, bar::setValue, 128);
+    }
+
+    /**
+     * Imports settings.json, credentials.json and obs-overlay-template from Julti plugin (if these exist).
+     */
+    public static void importSettingsFromJulti() {
+        Path jultiStatsPluginPath = Paths.get(System.getProperty("user.home")).resolve(".Julti").resolve("stats-plugin");
+        if (jultiStatsPluginPath.toFile().exists()) {
+            // Import existing Julti settings to prevent double setup
+            Jingle.log(Level.INFO, "(StatsPlugin) Importing Julti settings.");
+
+            boolean success = true;
+            Path credentialsPath = jultiStatsPluginPath.resolve("credentials.json");
+            if (credentialsPath.toFile().exists()) {
+                try {
+                    Files.copy(credentialsPath, GOOGLE_SHEETS_CREDENTIALS_PATH, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    success = false;
+                    Jingle.log(Level.ERROR, "(StatsPlugin) Error while trying to copy credentials.json from Julti:\n" + ExceptionUtil.toDetailedString(e));
+                }
+            }
+            Path settingsPath = jultiStatsPluginPath.resolve("settings.json");
+            if (settingsPath.toFile().exists()) {
+                try {
+                    Files.copy(settingsPath, STATS_SETTINGS_PATH, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    success = false;
+                    Jingle.log(Level.ERROR, "(StatsPlugin) Error while trying to copy settings.json from Julti:\n" + ExceptionUtil.toDetailedString(e));
+                }
+            }
+            Path obsOverlayTemplatePath = jultiStatsPluginPath.resolve("obs-overlay-template");
+            if (obsOverlayTemplatePath.toFile().exists()) {
+                try {
+                    Files.copy(obsOverlayTemplatePath, OBS_OVERLAY_TEMPLATE_PATH, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    success = false;
+                    Jingle.log(Level.ERROR, "(StatsPlugin) Error while trying to copy obs-overlay-template from Julti:\n" + ExceptionUtil.toDetailedString(e));
+                }
+            }
+
+            if (success) {
+                Jingle.log(Level.INFO, "(StatsPlugin) Imported Julti settings!");
+                JOptionPane.showMessageDialog(null, "Stats Plugin has imported settings from Julti.\nIMPORTANT: If you're using the OBS overlay, make sure to change the file path!", "Stats Plugin - Imported from Julti", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Jingle.log(Level.INFO, "(StatsPlugin) Didn't import Julti settings completely.");
+                JOptionPane.showMessageDialog(null, "Stats Plugin tried to import settings from Julti, but failed.\nCheck the logs for more information.", "Stats Plugin - Failed to import", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
 }

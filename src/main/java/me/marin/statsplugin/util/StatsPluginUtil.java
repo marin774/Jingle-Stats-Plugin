@@ -132,5 +132,4 @@ public class StatsPluginUtil {
         throw new FileStillEmptyException("File is still empty after 50 attempts.");
     }
 
-
 }
