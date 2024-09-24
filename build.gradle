@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+group = project.maven_group
+version = project.plugin_version
+archivesBaseName = project.archives_base_name
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url "https://www.jetbrains.com/intellij-repository/releases" }
+}
+
+dependencies {
+    // Choose Jingle version: https://jitpack.io/#DuncanRuns/Jingle/
+    implementation 'com.github.DuncanRuns:Jingle:v1.0.0'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    // Google Sheets API
+    shadow 'com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0'
+    shadow 'com.google.auth:google-auth-library-oauth2-http:1.16.1'
+
+    // Jgoodies (GUI)
+    shadow group: 'com.jgoodies', name: 'jgoodies-forms', version: '1.9.0'
+}
+
+// Compiled .class files which Jingle complains about, but aren't necessary, so they get excluded ¯\_(ツ)_/¯
+shadowJar {
+    dependencies {
+        exclude 'com/google/common/collect/ImmutableSortedSetFauxverideShim.class'
+        exclude 'META-INF/versions/9/module-info.class'
+        exclude 'org/apache/commons/logging/impl/ServletContextCleaner.class'
+        exclude 'com/google/common/io/Closer$LoggingSuppressor.class'
+        exclude 'com/google/common/io/Closer$SuppressingSuppressor.class'
+    }
+    configurations = [project.configurations.shadow]
+}
+
+var jinglePluginsFolderPath = "${System.getProperty('user.home')}/.config/Jingle/plugins"
+task copyJar(type: Copy) {
+    from shadowJar
+    into jinglePluginsFolderPath
+}
