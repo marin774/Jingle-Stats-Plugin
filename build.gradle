@@ -31,10 +31,6 @@ repositories {
     maven { url "https://www.jetbrains.com/intellij-repository/releases" }
 }
 
-compileJava {
-    options.compilerArgs << '-parameters'
-}
-
 dependencies {
     // Choose Jingle version: https://jitpack.io/#DuncanRuns/Jingle/
     implementation 'com.github.DuncanRuns:Jingle:v1.0.0'
@@ -61,6 +57,14 @@ shadowJar {
         exclude 'com/google/common/io/Closer$SuppressingSuppressor.class'
     }
     configurations = [project.configurations.shadow]
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("jingle.plugin.json") {
+        expand "version": project.version
+    }
 }
 
 var jinglePluginsFolderPath = "${System.getProperty('user.home')}/.config/Jingle/plugins"
