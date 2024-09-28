@@ -1,15 +1,19 @@
 package me.marin.statsplugin.util;
 
+import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.jingle.Jingle;
+import xyz.duncanruns.jingle.JingleAppLaunch;
 import xyz.duncanruns.jingle.plugin.PluginManager;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
+import xyz.duncanruns.jingle.util.PowerShellUtil;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +21,7 @@ import java.util.Map;
 
 public class VersionUtil {
 
-    public static final Version CURRENT_VERSION = new Version(1, 0, 0);
+    public static final Version CURRENT_VERSION = new Version(1, 0, 1);
 
     public static Version version(String version) {
         String[] parts = version.split("\\.");
@@ -41,7 +45,11 @@ public class VersionUtil {
 
         plugins.forEach(pair -> {
             PluginManager.JinglePluginData data = pair.getRight();
-            if (!data.id.equals("jingle-stats-plugin")) {
+            if (data.id.equals("jingle-stats-plugin")) { // old id with broken gradle version
+                temp_forceDeleteBrokenJar(pair.getLeft());
+                return;
+            }
+            if (!data.id.equals("jingle_stats_plugin")) {
                 return;
             }
 
@@ -57,6 +65,31 @@ public class VersionUtil {
                 bestPluginVersions.put(data.id, pair);
             }
         });
+    }
+
+    private static void temp_forceDeleteBrokenJar(Path path) {
+        Path javaExe = Paths.get(System.getProperty("java.home")).resolve("bin").resolve("javaw.exe");
+
+        JingleAppLaunch.releaseLock();
+        Jingle.options.save();
+
+        // Use powershell's start-process to start it detached
+        String command = String.format(
+                "Start-Process powershell -ArgumentList \"Start-Sleep -Seconds 1; Remove-Item -Path '\"\"%s\"\"' -Force; Start-Process '\"\"%s\"\"' '-jar \"\"%s\"\"'\" -NoNewWindow",
+                path,                          // Path to the file to delete
+                javaExe,                       // Path to javaw.exe
+                Jingle.getSourcePath()        // Path to the JAR file
+        );
+
+        Jingle.log(Level.INFO, "(StatsPlugin) Force deleting broken jar: " + command);
+
+        try {
+            PowerShellUtil.execute(command);
+        } catch (PowerShellExecutionException | IOException e) {
+            Jingle.log(Level.ERROR, ExceptionUtil.toDetailedString(e));
+        }
+
+        System.exit(0);
     }
 
     private static void deletePluginJar(Path path) {

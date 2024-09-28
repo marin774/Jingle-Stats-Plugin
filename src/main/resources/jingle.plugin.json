@@ -1,6 +1,6 @@
 {
   "name": "Stats",
-  "id": "jingle-stats-plugin",
+  "id": "jingle_stats_plugin",
   "version": "${version}",
   "initializer": "me.marin.statsplugin.StatsPlugin::initialize"
 }
