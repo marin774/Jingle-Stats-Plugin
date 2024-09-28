@@ -16,16 +16,13 @@ import xyz.duncanruns.jingle.gui.JingleGUI;
 import xyz.duncanruns.jingle.plugin.PluginManager;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Objects;
 
 import static me.marin.statsplugin.util.VersionUtil.CURRENT_VERSION;
 

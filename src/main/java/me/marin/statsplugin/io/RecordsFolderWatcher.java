@@ -2,6 +2,7 @@ package me.marin.statsplugin.io;
 
 import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
+import me.marin.statsplugin.api.StatsEvents;
 import me.marin.statsplugin.util.StatsPluginUtil;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.stats.StatsRecord;
@@ -154,6 +155,7 @@ public class RecordsFolderWatcher extends FileWatcher {
         if (StatsPluginSettings.getInstance().useSheets && StatsPlugin.googleSheets.isConnected()) {
             StatsPlugin.googleSheets.insertRecord(csvRecord);
         }
+        StatsEvents.broadcastEvent(new StatsEvents.NewRunEvent(csvRecord));
 
         wallResetsSincePrev = 0;
         splitlessResets = 0;
