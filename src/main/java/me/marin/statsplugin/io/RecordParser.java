@@ -61,6 +61,9 @@ public class RecordParser {
         if (!record.get("world_name").getAsString().startsWith("Random Speedrun #")) {
             return false;
         }
+        if (record.get("default_gamemode").getAsInt() != 0) {
+            return false;
+        }
         return true;
     }
 
