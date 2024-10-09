@@ -59,7 +59,7 @@ public class UpdateUtil {
     public synchronized static UpdateInfo checkForUpdates() throws IOException {
         JsonObject meta = GrabUtil.grabJson("https://raw.githubusercontent.com/marin774/Jingle-Stats-Plugin/main/meta.json");
 
-        Jingle.log(Level.DEBUG, "(StatsPlugin) Grabbed Stats meta: " + meta.toString());
+        log(Level.DEBUG, "Grabbed meta: " + meta.toString());
 
         VersionUtil.Version latestVersion = VersionUtil.version(meta.get("latest").getAsString());
         String downloadURL = meta.get("latest_download").getAsString();
@@ -84,7 +84,7 @@ public class UpdateUtil {
             updateAndRelaunch(download);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Unknown error while updating. Try again or update manually.");
-            Jingle.log(Level.ERROR, "(StatsPlugin) Unknown error while updating:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Unknown error while updating:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 
@@ -92,9 +92,9 @@ public class UpdateUtil {
         Path newJarPath = StatsPlugin.PLUGINS_PATH.resolve(URLDecoder.decode(FilenameUtils.getName(download), StandardCharsets.UTF_8.name()));
 
         if (!Files.exists(newJarPath)) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Downloading new jar to " + newJarPath);
+            log(Level.DEBUG, "Downloading new jar to " + newJarPath);
             downloadWithProgress(download, newJarPath);
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Downloaded new jar " + newJarPath.getFileName());
+            log(Level.DEBUG, "Downloaded new jar " + newJarPath.getFileName());
         }
 
         Path javaExe = Paths.get(System.getProperty("java.home")).resolve("bin").resolve("javaw.exe");
@@ -105,7 +105,7 @@ public class UpdateUtil {
 
         // Use powershell's start-process to start it detached
         String powerCommand = String.format("start-process '%s' '-jar \"%s\"'", javaExe, Jingle.getSourcePath());
-        Jingle.log(Level.INFO, "(StatsPlugin) Exiting and running powershell command: " + powerCommand);
+        log(Level.INFO, "Exiting and running powershell command: " + powerCommand);
         PowerShellUtil.execute(powerCommand);
 
         System.exit(0);
@@ -125,7 +125,7 @@ public class UpdateUtil {
         Path jultiStatsPluginPath = Paths.get(System.getProperty("user.home")).resolve(".Julti").resolve("stats-plugin");
         if (jultiStatsPluginPath.toFile().exists()) {
             // Import existing Julti settings to prevent double setup
-            Jingle.log(Level.INFO, "(StatsPlugin) Importing Julti settings.");
+            log(Level.INFO, "Importing Julti settings.");
 
             boolean success = true;
             Path credentialsPath = jultiStatsPluginPath.resolve("credentials.json");
@@ -134,7 +134,7 @@ public class UpdateUtil {
                     Files.copy(credentialsPath, GOOGLE_SHEETS_CREDENTIALS_PATH, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     success = false;
-                    Jingle.log(Level.ERROR, "(StatsPlugin) Error while trying to copy credentials.json from Julti:\n" + ExceptionUtil.toDetailedString(e));
+                    log(Level.ERROR, "Error while trying to copy credentials.json from Julti:\n" + ExceptionUtil.toDetailedString(e));
                 }
             }
             Path settingsPath = jultiStatsPluginPath.resolve("settings.json");
@@ -143,7 +143,7 @@ public class UpdateUtil {
                     Files.copy(settingsPath, STATS_SETTINGS_PATH, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     success = false;
-                    Jingle.log(Level.ERROR, "(StatsPlugin) Error while trying to copy settings.json from Julti:\n" + ExceptionUtil.toDetailedString(e));
+                    log(Level.ERROR, "Error while trying to copy settings.json from Julti:\n" + ExceptionUtil.toDetailedString(e));
                 }
             }
             Path obsOverlayTemplatePath = jultiStatsPluginPath.resolve("obs-overlay-template");
@@ -152,15 +152,15 @@ public class UpdateUtil {
                     Files.copy(obsOverlayTemplatePath, OBS_OVERLAY_TEMPLATE_PATH, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     success = false;
-                    Jingle.log(Level.ERROR, "(StatsPlugin) Error while trying to copy obs-overlay-template from Julti:\n" + ExceptionUtil.toDetailedString(e));
+                    log(Level.ERROR, "Error while trying to copy obs-overlay-template from Julti:\n" + ExceptionUtil.toDetailedString(e));
                 }
             }
 
             if (success) {
-                Jingle.log(Level.INFO, "(StatsPlugin) Imported Julti settings!");
+                log(Level.INFO, "Imported Julti settings!");
                 JOptionPane.showMessageDialog(null, "Stats Plugin has imported settings from Julti.\nIMPORTANT: If you're using the OBS overlay, make sure to change the file path!", "Stats Plugin - Imported from Julti", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                Jingle.log(Level.INFO, "(StatsPlugin) Didn't import Julti settings completely.");
+                log(Level.INFO, "Didn't import Julti settings completely.");
                 JOptionPane.showMessageDialog(null, "Stats Plugin tried to import settings from Julti, but failed.\nCheck the logs for more information.", "Stats Plugin - Failed to import", JOptionPane.ERROR_MESSAGE);
             }
         }

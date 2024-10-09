@@ -3,7 +3,6 @@ package me.marin.statsplugin.gui;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.gui.JingleGUI;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
@@ -57,7 +56,7 @@ public class OBSOverlayGUI extends JFrame {
         try {
             overlayFormatTextArea.setText(new String(Files.readAllBytes(OBS_OVERLAY_TEMPLATE_PATH), StandardCharsets.UTF_8));
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Failed to read obs-overlay-template:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Failed to read obs-overlay-template:\n" + ExceptionUtil.toDetailedString(e));
         }
         updateOverlayFormatButton.addActionListener(a -> {
             String text = overlayFormatTextArea.getText();
@@ -66,7 +65,7 @@ public class OBSOverlayGUI extends JFrame {
                 CURRENT_SESSION.updateOverlay();
                 JOptionPane.showMessageDialog(null, "Updated overlay template!");
             } catch (IOException e) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Failed to write to obs-overlay-template:\n" + ExceptionUtil.toDetailedString(e));
+                log(Level.ERROR, "Failed to write to obs-overlay-template:\n" + ExceptionUtil.toDetailedString(e));
             }
         });
     }
@@ -84,7 +83,7 @@ public class OBSOverlayGUI extends JFrame {
         try {
             Files.copy(Objects.requireNonNull(OBSOverlayGUI.class.getResourceAsStream("/obs-overlay-template")), OBS_OVERLAY_TEMPLATE_PATH);
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Failed to create obs-overlay-template:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Failed to create obs-overlay-template:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 

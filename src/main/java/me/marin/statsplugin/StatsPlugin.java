@@ -49,7 +49,7 @@ public class StatsPlugin {
     }
 
     public static void initialize() {
-        Jingle.log(Level.INFO, "(StatsPlugin) Running StatsPlugin v" + CURRENT_VERSION + "!");
+        log(Level.INFO, "Running StatsPlugin v" + CURRENT_VERSION + "!");
 
         boolean isFirstLaunch = !STATS_FOLDER_PATH.toFile().exists();
         STATS_FOLDER_PATH.toFile().mkdirs();
@@ -65,12 +65,12 @@ public class StatsPlugin {
             String dateTime = previousSession.getLatestRecord().dateTime();
 
             long timeSince = Math.abs(Duration.between(Instant.now(), StatsPluginUtil.dateTimeToInstant(dateTime)).toMillis());
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Last record in previous session: " + dateTime + "(" + timeSince + "ms ago)");
+            log(Level.DEBUG, "Last record in previous session: " + dateTime + "(" + timeSince + "ms ago)");
 
             if (timeSince < THREE_HOURS_MS) {
                 // less than 3 hours since previous session, merge
                 CURRENT_SESSION = previousSession;
-                Jingle.log(Level.INFO, "(StatsPlugin) Continuing previous session.");
+                log(Level.INFO, "Continuing previous session.");
             }
         }
 
@@ -92,7 +92,7 @@ public class StatsPlugin {
         try {
             recordsPath = Paths.get(StatsPluginSettings.getInstance().recordsPath);
         } catch (Exception e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Invalid SpeedrunIGT records folder in settings, change it manually settings.json and restart Jingle!\n"+ ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Invalid SpeedrunIGT records folder in settings, change it manually settings.json and restart Jingle!\n"+ ExceptionUtil.toDetailedString(e));
             return;
         }
         StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(recordsPath));
@@ -105,18 +105,22 @@ public class StatsPlugin {
         JingleGUI.addPluginTab("Stats", statsGUI);
     }
 
+    public static void log(Level level, String message) {
+        Jingle.log(level, "(StatsPlugin) " + message);
+    }
+
     private static VersionUtil.Version getVersionFromSettings() {
         return VersionUtil.version(StatsPluginSettings.getInstance().version);
     }
 
     public static void updateFrom(VersionUtil.Version version) {
-        Jingle.log(Level.INFO, "(StatsPlugin) Updating from version " + version + ".");
+        log(Level.INFO, "Updating from version " + version + ".");
 
         // currently unused.
 
         StatsPluginSettings.getInstance().version = CURRENT_VERSION.toString();
         StatsPluginSettings.save();
-        Jingle.log(Level.INFO, "(StatsPlugin) Updated to v" + CURRENT_VERSION + "!");
+        log(Level.INFO, "Updated to v" + CURRENT_VERSION + "!");
     }
 
     public static boolean reloadGoogleSheets() {

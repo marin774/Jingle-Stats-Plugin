@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.marin.statsplugin.StatsPlugin.log;
+
 public class VersionUtil {
 
-    public static final Version CURRENT_VERSION = new Version(1, 0, 1);
+    public static final Version CURRENT_VERSION = new Version(1, 1, 0);
 
     public static Version version(String version) {
         String[] parts = version.split("\\.");
@@ -37,7 +39,7 @@ public class VersionUtil {
         try {
             plugins = PluginManager.getFolderPlugins();
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Failed to load plugins from folder:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Failed to load plugins from folder:\n" + ExceptionUtil.toDetailedString(e));
         }
 
         // Mod ID -> path and data
@@ -81,12 +83,12 @@ public class VersionUtil {
                 Jingle.getSourcePath()        // Path to the JAR file
         );
 
-        Jingle.log(Level.INFO, "(StatsPlugin) Force deleting broken jar: " + command);
+        log(Level.INFO, "Force deleting broken jar: " + command);
 
         try {
             PowerShellUtil.execute(command);
         } catch (PowerShellExecutionException | IOException e) {
-            Jingle.log(Level.ERROR, ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, ExceptionUtil.toDetailedString(e));
         }
 
         System.exit(0);
@@ -96,7 +98,7 @@ public class VersionUtil {
         try {
             Files.delete(path);
         } catch (Exception e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Failed to delete " + path.getFileName() + " plugin:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Failed to delete " + path.getFileName() + " plugin:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 

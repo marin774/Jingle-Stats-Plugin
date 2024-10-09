@@ -1,7 +1,6 @@
 package me.marin.statsplugin.io;
 
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
 import java.io.File;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
+import static me.marin.statsplugin.StatsPlugin.log;
 
 /**
  * Works with single files and directories.
@@ -38,7 +38,7 @@ public abstract class FileWatcher implements Runnable {
         try {
             watchService = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Could not start WatchService:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Could not start WatchService:\n" + ExceptionUtil.toDetailedString(e));
             return;
         }
         try {
@@ -60,7 +60,7 @@ public abstract class FileWatcher implements Runnable {
                             try {
                                 handleFileUpdated(updatedFile);
                             } catch (Exception e) {
-                                Jingle.log(Level.ERROR, "(StatsPlugin) Unhandled exception in '" + this.name + "':\n" + ExceptionUtil.toDetailedString(e));
+                                log(Level.ERROR, "Unhandled exception in '" + this.name + "':\n" + ExceptionUtil.toDetailedString(e));
                             }
                         }
                     }
@@ -69,11 +69,11 @@ public abstract class FileWatcher implements Runnable {
         } catch (ClosedWatchServiceException ignored) {
             // when stop method gets called, ClosedWatchServiceException is thrown, and file watcher should stop.
         } catch (IOException | InterruptedException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Error while reading:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Error while reading:\n" + ExceptionUtil.toDetailedString(e));
         } catch (Exception e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Unknown exception while reading:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Unknown exception while reading:\n" + ExceptionUtil.toDetailedString(e));
         }
-        Jingle.log(Level.DEBUG, "(StatsPlugin) (StatsPlugin) FileWatcher was closed " + name);
+        log(Level.DEBUG, "FileWatcher was closed " + name);
     }
 
     protected abstract void handleFileUpdated(File file);
@@ -82,7 +82,7 @@ public abstract class FileWatcher implements Runnable {
         try {
             watchService.close();
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Could not stop WatchService:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Could not stop WatchService:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 

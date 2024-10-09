@@ -15,7 +15,6 @@ import me.marin.statsplugin.io.StatsFileIO;
 import me.marin.statsplugin.io.StatsPluginSettings;
 import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
 import java.io.*;
@@ -24,6 +23,8 @@ import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.*;
+
+import static me.marin.statsplugin.StatsPlugin.log;
 
 public class GoogleSheets {
 
@@ -49,12 +50,12 @@ public class GoogleSheets {
 
             String sheetLink = StatsPluginSettings.getInstance().sheetLink;
             if (sheetLink == null) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Couldn't find Google Sheets link in settings.json. Update settings and click 'Reconnect to Google Sheets' button.");
+                log(Level.ERROR, "Couldn't find Google Sheets link in settings.json. Update settings and click 'Reconnect to Google Sheets' button.");
                 return false;
             }
             this.spreadsheetId = StatsPluginUtil.extractGoogleSheetsID(sheetLink);
             if (this.spreadsheetId == null) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Couldn't find Google Sheets ID in URL (" + sheetLink + "). Make sure that the provided link is valid, then click 'Reconnect to Google Sheets' button.");
+                log(Level.ERROR, "Couldn't find Google Sheets ID in URL (" + sheetLink + "). Make sure that the provided link is valid, then click 'Reconnect to Google Sheets' button.");
                 return false;
             }
             GoogleCredentials credential = authorize(credentialsPath);
@@ -65,11 +66,11 @@ public class GoogleSheets {
 
             getRawDataSheet();
 
-            Jingle.log(Level.INFO, "(StatsPlugin) Connected to Google Sheets!");
+            log(Level.INFO, "Connected to Google Sheets!");
             setHeaderColumns();
             return true;
         } catch (Exception e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Failed to connect to Google Sheets: " + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Failed to connect to Google Sheets: " + ExceptionUtil.toDetailedString(e));
         }
         return false;
     }
@@ -126,7 +127,7 @@ public class GoogleSheets {
                 batchUpdateRequest.setRequests(requests);
                 service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest).execute();
             } catch (Exception e) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
+                log(Level.ERROR, "Failed to update Google Sheets: " + ExceptionUtil.toDetailedString(e));
             }
         });
     }
@@ -181,7 +182,7 @@ public class GoogleSheets {
                 StatsFileIO.getInstance().writeTempStats(record);
 
                 if (!(e instanceof SocketTimeoutException || e instanceof UnknownHostException)) {
-                    Jingle.log(Level.ERROR, "(StatsPlugin) Failed to update Google Sheets (run was saved locally): " + ExceptionUtil.toDetailedString(e));
+                    log(Level.ERROR, "Failed to update Google Sheets (run was saved locally): " + ExceptionUtil.toDetailedString(e));
                 }
             }
         });

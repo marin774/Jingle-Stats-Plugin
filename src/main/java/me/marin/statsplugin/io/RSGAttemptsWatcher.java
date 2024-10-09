@@ -11,6 +11,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static me.marin.statsplugin.StatsPlugin.log;
+
 /**
  * Reads Atum's rsg-attempts.txt for reset counts, and then checks wpstateout.txt in the same instance.
  * If the state is "wall", it calculates wall/break time.
@@ -26,7 +28,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
         super("rsg-attempts-watcher", atumDirectory.toFile());
         this.wpStateoutPath = wpStateoutPath;
 
-        Jingle.log(Level.DEBUG, "(StatsPlugin) rsg-attempts.txt watcher is running...");
+        log(Level.DEBUG, "rsg-attempts.txt watcher is running...");
         previousAtumResets = getAtumResets();
     }
 
@@ -34,7 +36,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
         try {
             return StatsPluginUtil.readFile(wpStateoutPath);
         } catch (FileStillEmptyException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) wpstateout.txt is empty?\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "wpstateout.txt is empty?\n" + ExceptionUtil.toDetailedString(e));
             return null;
         }
     }
@@ -46,13 +48,13 @@ public class RSGAttemptsWatcher extends FileWatcher {
         try {
             resetString = StatsPluginUtil.readFile(path);
         } catch (FileStillEmptyException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) rsg-attempts.txt is empty?\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "rsg-attempts.txt is empty?\n" + ExceptionUtil.toDetailedString(e));
             return -1;
         }
         try {
             return Long.parseLong(resetString);
         } catch (NumberFormatException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) invalid number in rsg-attempts.txt '" + resetString + "':\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "invalid number in rsg-attempts.txt '" + resetString + "':\n" + ExceptionUtil.toDetailedString(e));
             return -1;
         }
     }
@@ -88,7 +90,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
         if (atumResets < 0 || atumResets == previousAtumResets) {
             return;
         }
-        log(Level.DEBUG, "Resets: " + atumResets + ", state: " + state, atumResets);
+        tryLog(Level.DEBUG, "Resets: " + atumResets + ", state: " + state, atumResets);
 
         if (isWallActive) {
             long delta = Math.max(0, atumResets - previousAtumResets);
@@ -96,7 +98,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
             if (delta > 1000) {
                 delta = 1; // prevent messing up stats if file is manually edited.
             }
-            log(Level.DEBUG, "Wall resets +" + delta + " (" + wallResetsSincePrev + " total).", atumResets);
+            tryLog(Level.DEBUG, "Wall resets +" + delta + " (" + wallResetsSincePrev + " total).", atumResets);
         }
         previousAtumResets = atumResets;
 
@@ -108,10 +110,10 @@ public class RSGAttemptsWatcher extends FileWatcher {
             if (isWallActive) {
                 if (delta > StatsPluginSettings.getInstance().breakThreshold * 1000L) {
                     breakRTASincePrev += delta;
-                    log(Level.DEBUG, "Break RTA +" + delta + "ms (" + breakRTASincePrev + "ms total).", atumResets);
+                    tryLog(Level.DEBUG, "Break RTA +" + delta + "ms (" + breakRTASincePrev + "ms total).", atumResets);
                 } else {
                     wallTimeSincePrev += delta;
-                    log(Level.DEBUG, "Wall time since prev. +" + delta + "ms (" + wallTimeSincePrev + "ms total).", atumResets);
+                    tryLog(Level.DEBUG, "Wall time since prev. +" + delta + "ms (" + wallTimeSincePrev + "ms total).", atumResets);
                 }
             }
         }
@@ -129,9 +131,9 @@ public class RSGAttemptsWatcher extends FileWatcher {
         wallTimeSincePrev = 0;
     }
 
-    private void log(Level level, String message, long atumResets) {
+    private void tryLog(Level level, String message, long atumResets) {
         if (atumResets % 50 == 0) {
-            Jingle.log(level, message);
+            log(level, message);
         }
     }
 

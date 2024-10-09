@@ -2,10 +2,8 @@ package me.marin.statsplugin.io;
 
 import me.marin.statsplugin.util.StatsPluginUtil;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.instance.InstanceChecker;
 import xyz.duncanruns.jingle.instance.OpenedInstanceInfo;
-import xyz.duncanruns.jingle.plugin.PluginEvents;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
 import java.nio.file.Files;
@@ -16,6 +14,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static me.marin.statsplugin.StatsPlugin.log;
 
 /**
  * Creates new rsg-attempts.txt watchers when new instances appear.
@@ -31,7 +31,7 @@ public class InstanceManagerRunnable implements Runnable {
         try {
             doRun();
         } catch (Exception e) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) (StatsPlugin) Error while tracking resets & wall time:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.DEBUG, "(StatsPlugin) Error while tracking resets & wall time:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 
@@ -50,7 +50,7 @@ public class InstanceManagerRunnable implements Runnable {
                 // close old watchers (this instance was just closed)
                 instanceWatcherMap.get(closedInstancePath).stop();
                 instanceWatcherMap.remove(closedInstancePath);
-                Jingle.log(Level.DEBUG, "(StatsPlugin) Closed a FileWatcher for instance: " + closedInstancePath);
+                log(Level.DEBUG, "Closed a FileWatcher for instance: " + closedInstancePath);
             }
         }
 
@@ -68,7 +68,7 @@ public class InstanceManagerRunnable implements Runnable {
                 Path atumDirectory = Paths.get(path, "config", "mcsr", "atum");
                 Path wpStateoutPath = Paths.get(path, "wpstateout.txt");
 
-                Jingle.log(Level.DEBUG, "(StatsPlugin) Starting a new FileWatcher for instance: " + path);
+                log(Level.DEBUG, "Starting a new FileWatcher for instance: " + path);
 
                 RSGAttemptsWatcher watcher = new RSGAttemptsWatcher(atumDirectory, wpStateoutPath);
                 StatsPluginUtil.runAsync("rsg-attempts-watcher", watcher);

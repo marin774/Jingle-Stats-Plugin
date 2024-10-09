@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
 import java.io.File;
@@ -23,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static me.marin.statsplugin.StatsPlugin.log;
 import static me.marin.statsplugin.io.RecordsFolderWatcher.DATETIME_FORMATTER;
 
 public class StatsPluginUtil {
@@ -32,10 +32,10 @@ public class StatsPluginUtil {
             String json = StatsPluginUtil.readFile(file.toPath());
             return new Gson().fromJson(json, JsonObject.class);
         } catch (FileStillEmptyException e) {
-            Jingle.log(Level.ERROR, file.getName() + " is empty?\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, file.getName() + " is empty?\n" + ExceptionUtil.toDetailedString(e));
             return null;
         } catch (Exception e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Could not read JSON file '" + file.getName() + "':\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Could not read JSON file '" + file.getName() + "':\n" + ExceptionUtil.toDetailedString(e));
             return null;
         }
     }
@@ -126,7 +126,7 @@ public class StatsPluginUtil {
                 Thread.sleep(10);
                 attempts++;
             } catch (IOException | InterruptedException e) {
-                Jingle.log(Level.DEBUG, "(StatsPlugin) Could not read " + path.getFileName() + ":\n" + ExceptionUtil.toDetailedString(e));
+                log(Level.DEBUG, "Could not read " + path.getFileName() + ":\n" + ExceptionUtil.toDetailedString(e));
             }
         }
         throw new FileStillEmptyException("File is still empty after 50 attempts.");

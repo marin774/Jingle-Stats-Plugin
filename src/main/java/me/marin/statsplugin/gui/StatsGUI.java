@@ -8,7 +8,6 @@ import me.marin.statsplugin.io.StatsPluginSettings;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.util.UpdateUtil;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
 import javax.swing.*;
@@ -51,7 +50,7 @@ public class StatsGUI extends JPanel {
             StatsPluginSettings settings = StatsPluginSettings.getInstance();
             settings.trackerEnabled = trackerEnabledCheckbox.isSelected();
             StatsPluginSettings.save();
-            Jingle.log(Level.INFO, settings.trackerEnabled ? "Now tracking stats." : "No longer tracking stats.");
+            log(Level.INFO, settings.trackerEnabled ? "Now tracking stats." : "No longer tracking stats.");
         });
 
         setupButton.addActionListener(a -> {
@@ -66,7 +65,7 @@ public class StatsGUI extends JPanel {
             try {
                 Desktop.getDesktop().open(STATS_SETTINGS_PATH.toFile());
             } catch (IOException e) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Failed to open settings.json:\n" + ExceptionUtil.toDetailedString(e));
+                log(Level.ERROR, "Failed to open settings.json:\n" + ExceptionUtil.toDetailedString(e));
             }
         });
 
@@ -79,7 +78,7 @@ public class StatsGUI extends JPanel {
                 }
                 Desktop.getDesktop().browse(URI.create(sheetLink));
             } catch (Exception e) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Failed to open sheets:\n" + ExceptionUtil.toDetailedString(e));
+                log(Level.ERROR, "Failed to open sheets:\n" + ExceptionUtil.toDetailedString(e));
             }
         });
 
@@ -93,7 +92,7 @@ public class StatsGUI extends JPanel {
                 String sheetsID = StatsPluginUtil.extractGoogleSheetsID(sheetLink);
                 Desktop.getDesktop().browse(URI.create("https://reset-analytics-dev.vercel.app/sheet/" + sheetsID));
             } catch (Exception e) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Failed to open sheets:\n" + ExceptionUtil.toDetailedString(e));
+                log(Level.ERROR, "Failed to open sheets:\n" + ExceptionUtil.toDetailedString(e));
             }
         });
 
@@ -109,7 +108,7 @@ public class StatsGUI extends JPanel {
         reloadSettingsButton.addActionListener(a -> {
             StatsPluginSettings.load();
             updateGUI();
-            Jingle.log(Level.INFO, "(StatsPlugin) Reloaded settings.");
+            log(Level.INFO, "Reloaded settings.");
             JOptionPane.showMessageDialog(null, "Reloaded settings.");
         });
 
@@ -129,7 +128,7 @@ public class StatsGUI extends JPanel {
         startANewSessionButton.addActionListener(a -> {
             CURRENT_SESSION = new Session();
             CURRENT_SESSION.updateOverlay();
-            Jingle.log(Level.INFO, "(StatsPlugin) Started a new session!");
+            log(Level.INFO, "Started a new session!");
             JOptionPane.showMessageDialog(null, "New session started.");
         });
 

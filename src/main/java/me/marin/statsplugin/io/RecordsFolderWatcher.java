@@ -2,12 +2,10 @@ package me.marin.statsplugin.io;
 
 import com.google.gson.JsonObject;
 import me.marin.statsplugin.StatsPlugin;
-import me.marin.statsplugin.api.StatsEvents;
 import me.marin.statsplugin.util.StatsPluginUtil;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -18,6 +16,8 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static me.marin.statsplugin.StatsPlugin.log;
 
 public class RecordsFolderWatcher extends FileWatcher {
 
@@ -45,33 +45,33 @@ public class RecordsFolderWatcher extends FileWatcher {
 
     public RecordsFolderWatcher(Path path) {
         super("records-folder-watcher", path.toFile());
-        Jingle.log(Level.DEBUG, "(StatsPlugin) Records folder watcher is running...");
+        log(Level.DEBUG, "Records folder watcher is running...");
     }
 
     @Override
     protected void handleFileUpdated(File file) {
-        Jingle.log(Level.DEBUG, "(StatsPlugin) records> " + file.getName());
+        log(Level.DEBUG, "records> " + file.getName());
         if (!StatsPluginSettings.getInstance().trackerEnabled) {
             return;
         }
         if (completedRunsRecordIds.contains(file.getName()) || mostRecentRecordIds.contains(file.getName())) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Not saving run because it was already completed/recently updated.");
+            log(Level.DEBUG, "Not saving run because it was already completed/recently updated.");
             return;
         }
 
         JsonObject recordJSON = StatsPluginUtil.readJSON(file);
         if (recordJSON == null || recordJSON.isJsonNull()) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Not saving run because record is null.");
+            log(Level.DEBUG, "Not saving run because record is null.");
             return;
         }
 
         RecordParser recordParser = new RecordParser(recordJSON);
         if (!recordParser.validateRSG()) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Not saving run because it's not rsg.");
+            log(Level.DEBUG, "Not saving run because it's not rsg.");
             return;
         }
         if (recordParser.getRTA() - recordParser.getIGT() > ONE_HOUR_MS) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Not saving run because it happened too long ago.");
+            log(Level.DEBUG, "Not saving run because it happened too long ago.");
             return;
         }
 
@@ -81,7 +81,7 @@ public class RecordsFolderWatcher extends FileWatcher {
             finalRTA = LAN;
         }
 
-        Jingle.log(Level.DEBUG, "(StatsPlugin) records> finalRTA " + finalRTA);
+        log(Level.DEBUG, "records> finalRTA " + finalRTA);
 
         // wall time calculation
         for (RSGAttemptsWatcher attemptsWatcher : InstanceManagerRunnable.instanceWatcherMap.values()) {
@@ -91,11 +91,11 @@ public class RecordsFolderWatcher extends FileWatcher {
             attemptsWatcher.reset();
         }
 
-        Jingle.log(Level.DEBUG, "(StatsPlugin) records> read from attempts watcher");
+        log(Level.DEBUG, "records> read from attempts watcher");
 
         if (finalRTA == 0) {
             // wallResetsSincePrev++;
-            Jingle.log(Level.DEBUG, "(StatsPlugin) final rta = 0, skipping");
+            log(Level.DEBUG, "final rta = 0, skipping");
             return;
         }
 
@@ -107,13 +107,13 @@ public class RecordsFolderWatcher extends FileWatcher {
         RTADistribution += finalRTA/1000 + "$";
 
         if (!recordParser.hasDoneAnySplit()) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Not saving run because it has no splits. (" + finalRTA + "ms rta)");
+            log(Level.DEBUG, "Not saving run because it has no splits. (" + finalRTA + "ms rta)");
             splitlessResets++;
             RTASincePrev += finalRTA;
             return;
         }
 
-        Jingle.log(Level.DEBUG, "(StatsPlugin) Done splits: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
+        log(Level.DEBUG, "Done splits: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
 
         String date = DATETIME_FORMATTER.format(Instant.ofEpochMilli(recordParser.getDate()));
         Map<String, Long> timelines = recordParser.getTimelinesMap();
@@ -155,7 +155,6 @@ public class RecordsFolderWatcher extends FileWatcher {
         if (StatsPluginSettings.getInstance().useSheets && StatsPlugin.googleSheets.isConnected()) {
             StatsPlugin.googleSheets.insertRecord(csvRecord);
         }
-        StatsEvents.broadcastEvent(new StatsEvents.NewRunEvent(csvRecord));
 
         wallResetsSincePrev = 0;
         splitlessResets = 0;

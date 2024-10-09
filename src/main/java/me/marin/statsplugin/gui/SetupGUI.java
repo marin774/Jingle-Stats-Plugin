@@ -12,7 +12,6 @@ import me.marin.statsplugin.StatsPlugin;
 import me.marin.statsplugin.util.StatsPluginUtil;
 import me.marin.statsplugin.io.StatsPluginSettings;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.gui.JingleGUI;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
@@ -41,6 +40,7 @@ import java.util.*;
 import java.util.List;
 
 import static me.marin.statsplugin.StatsPlugin.GOOGLE_SHEETS_CREDENTIALS_PATH;
+import static me.marin.statsplugin.StatsPlugin.log;
 
 public class SetupGUI extends JFrame {
 
@@ -140,7 +140,7 @@ public class SetupGUI extends JFrame {
                     try {
                         Desktop.getDesktop().browse(URI.create(String.valueOf(hle.getURL())));
                     } catch (Exception e) {
-                        Jingle.log(Level.ERROR, "(StatsPlugin) Failed to open link:\n" + ExceptionUtil.toDetailedString(e));
+                        log(Level.ERROR, "Failed to open link:\n" + ExceptionUtil.toDetailedString(e));
                     }
                 }
             });
@@ -191,7 +191,7 @@ public class SetupGUI extends JFrame {
                 try {
                     Files.copy(credentialsFilePath, GOOGLE_SHEETS_CREDENTIALS_PATH, StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
-                    Jingle.log(Level.DEBUG, ExceptionUtil.toDetailedString(e));
+                    log(Level.ERROR, ExceptionUtil.toDetailedString(e));
                     JOptionPane.showMessageDialog(null, "Looks like the credentials file was deleted before the setup was completed. Please run the setup again.");
                     return;
                 }
@@ -267,7 +267,7 @@ public class SetupGUI extends JFrame {
                         if (copyEmailButton != null) {
                             copyEmailButton.setEnabled(false);
                         }
-                        Jingle.log(Level.DEBUG, ExceptionUtil.toDetailedString(e));
+                        log(Level.DEBUG, ExceptionUtil.toDetailedString(e));
                         JOptionPane.showMessageDialog(null, "Unknown error while reading the file.");
                         return;
                     }
@@ -281,7 +281,7 @@ public class SetupGUI extends JFrame {
                     credentialsFilePath = file.toPath();
                 }
             } catch (Exception e) {
-                Jingle.log(Level.ERROR, "(StatsPlugin) Failed to import credentials.json:\n" + ExceptionUtil.toDetailedString(e));
+                log(Level.ERROR, "Failed to import credentials.json:\n" + ExceptionUtil.toDetailedString(e));
             }
         };
     }
@@ -323,7 +323,7 @@ public class SetupGUI extends JFrame {
                 JOptionPane.showMessageDialog(null, "Connected to Google Sheets!");
                 nextButton.setEnabled(true);
             } catch (Exception e) {
-                Jingle.log(Level.DEBUG, ExceptionUtil.toDetailedString(e));
+                log(Level.DEBUG, ExceptionUtil.toDetailedString(e));
                 JOptionPane.showMessageDialog(null, "Could not connect to sheet. Verify that: the credentials are correct, your sheet is being shared with the service account, and the sheet is publicly viewable.");
             }
         };

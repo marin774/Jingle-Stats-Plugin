@@ -6,7 +6,6 @@ import me.marin.statsplugin.stats.StatsRecord;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
 import java.io.*;
@@ -16,6 +15,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import static me.marin.statsplugin.StatsPlugin.log;
 
 public class StatsFileIO {
 
@@ -46,7 +47,7 @@ public class StatsFileIO {
             writer.write(statsRecord.toCSVLine());
             writer.newLine();
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Error while writing stats to stats.csv:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Error while writing stats to stats.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 
@@ -66,7 +67,7 @@ public class StatsFileIO {
                 }
             }
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Error while reading stats.csv for latest session:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Error while reading stats.csv for latest session:\n" + ExceptionUtil.toDetailedString(e));
         }
         Session session = new Session();
         while (!runs.isEmpty()) {
@@ -80,7 +81,7 @@ public class StatsFileIO {
             writer.write(statsRecord.toCSVLine());
             writer.newLine();
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Error while writing stats to temp.csv:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Error while writing stats to temp.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 
@@ -97,7 +98,7 @@ public class StatsFileIO {
             }
 
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Error while reading temp.csv:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Error while reading temp.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
         return runs;
     }
@@ -106,7 +107,7 @@ public class StatsFileIO {
         try {
             Files.deleteIfExists(TEMP_STATS_CSV_PATH);
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Error while deleting temp.csv:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Error while deleting temp.csv:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 

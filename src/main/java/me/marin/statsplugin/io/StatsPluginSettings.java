@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import me.marin.statsplugin.util.VersionUtil;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 import xyz.duncanruns.jingle.util.FileUtil;
 
@@ -15,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static me.marin.statsplugin.StatsPlugin.STATS_SETTINGS_PATH;
+import static me.marin.statsplugin.StatsPlugin.log;
 
 /**
  * Code template from draconix6's <a href="https://github.com/draconix6/Julti-CustomWall/blob/main/src/main/java/xyz/draconix6/customwallplugin/CustomWallOptions.java">Custom Wall plugin options</a>
@@ -81,7 +81,7 @@ public class StatsPluginSettings {
         try {
             FileUtil.writeString(STATS_SETTINGS_PATH, GSON.toJson(instance));
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Failed to save Stats Settings: " + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Failed to save Stats Settings: " + ExceptionUtil.toDetailedString(e));
         }
     }
 

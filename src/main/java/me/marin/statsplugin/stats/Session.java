@@ -3,7 +3,6 @@ package me.marin.statsplugin.stats;
 import me.marin.statsplugin.util.StatsPluginUtil;
 import me.marin.statsplugin.util.VersionUtil;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
 
 import java.io.IOException;
@@ -14,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static me.marin.statsplugin.StatsPlugin.OBS_OVERLAY_PATH;
-import static me.marin.statsplugin.StatsPlugin.OBS_OVERLAY_TEMPLATE_PATH;
+import static me.marin.statsplugin.StatsPlugin.*;
 
 public class Session {
 
@@ -26,7 +24,7 @@ public class Session {
     public void addRun(StatsRecord record, boolean isNewRun) {
         records.add(record);
         if (isNewRun) {
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Added this run, updating overlay: " + record);
+            log(Level.DEBUG, "Added this run, updating overlay: " + record);
             updateOverlay();
         }
     }
@@ -50,10 +48,10 @@ public class Session {
             template = template.replaceAll("%average%", StatsPluginUtil.formatTime((long)average, false));
             template = template.replaceAll("%rpe%", String.format(Locale.US, "%.0f", rpe));
 
-            Jingle.log(Level.DEBUG, "(StatsPlugin) Setting overlay to:\n" + template);
+            log(Level.DEBUG, "Setting overlay to:\n" + template);
             Files.write(OBS_OVERLAY_PATH, template.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
-            Jingle.log(Level.ERROR, "(StatsPlugin) Failed to update OBS overlay:\n" + ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Failed to update OBS overlay:\n" + ExceptionUtil.toDetailedString(e));
         }
     }
 
