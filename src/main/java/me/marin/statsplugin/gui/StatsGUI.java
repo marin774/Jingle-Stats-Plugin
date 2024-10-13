@@ -90,7 +90,7 @@ public class StatsGUI extends JPanel {
                     return;
                 }
                 String sheetsID = StatsPluginUtil.extractGoogleSheetsID(sheetLink);
-                Desktop.getDesktop().browse(URI.create("https://reset-analytics-dev.vercel.app/sheet/" + sheetsID));
+                Desktop.getDesktop().browse(URI.create("https://reset-analytics.vercel.app/sheet/" + sheetsID));
             } catch (Exception e) {
                 log(Level.ERROR, "Failed to open sheets:\n" + ExceptionUtil.toDetailedString(e));
             }
