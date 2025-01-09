@@ -121,10 +121,13 @@ public class StatsGUI extends JPanel {
         });
 
         startANewSessionButton.addActionListener(a -> {
-            CURRENT_SESSION = new Session();
-            CURRENT_SESSION.updateOverlay();
-            log(Level.INFO, "Started a new session!");
-            JOptionPane.showMessageDialog(null, "New session started.");
+            int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to start a new session?", "New session", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                CURRENT_SESSION = new Session();
+                CURRENT_SESSION.updateOverlay();
+                log(Level.INFO, "Started a new session!");
+                JOptionPane.showMessageDialog(null, "New session started.");
+            }
         });
 
         checkForUpdatesButton.addActionListener(a -> {

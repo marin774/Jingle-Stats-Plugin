@@ -103,6 +103,7 @@ public class StatsPlugin {
 
         statsGUI = new StatsGUI();
         JingleGUI.addPluginTab("Stats", statsGUI);
+        JingleGUI.get().registerQuickActionButton(10000, () -> statsGUI.getStartANewSessionButton());
     }
 
     public static void log(Level level, String message) {
