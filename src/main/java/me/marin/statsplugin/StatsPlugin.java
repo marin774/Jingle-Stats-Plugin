@@ -84,15 +84,11 @@ public class StatsPlugin {
 
         StatsPlugin.reloadGoogleSheets();
 
-        if (StatsPluginSettings.getInstance().deleteOldRecords) {
-            StatsPluginUtil.runAsync("old-record-bopper", new OldRecordBopperRunnable());
-        }
-
         Path recordsPath;
         try {
             recordsPath = Paths.get(StatsPluginSettings.getInstance().recordsPath);
         } catch (Exception e) {
-            log(Level.ERROR, "Invalid SpeedrunIGT records folder in settings, change it manually settings.json and restart Jingle!\n"+ ExceptionUtil.toDetailedString(e));
+            log(Level.ERROR, "Invalid SpeedrunIGT records folder in settings, fix it manually in settings.json and restart Jingle!\n"+ ExceptionUtil.toDetailedString(e));
             return;
         }
         StatsPluginUtil.runAsync("records-folder-watcher", new RecordsFolderWatcher(recordsPath));

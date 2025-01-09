@@ -42,9 +42,6 @@ public class StatsPluginSettings {
     @SerializedName("use sheets")
     public boolean useSheets = false;
 
-    @SerializedName(value = "delete old records", alternate = {"delete-old-records"})
-    public boolean deleteOldRecords = false;
-
     @SerializedName("completed setup")
     public boolean completedSetup = false;
 
