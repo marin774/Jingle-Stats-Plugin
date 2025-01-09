@@ -82,7 +82,9 @@ public class StatsPlugin {
             updateFrom(version);
         }
 
-        StatsPlugin.reloadGoogleSheets();
+        StatsPluginUtil.runAsync("google-sheet-connection", () -> {
+            StatsPlugin.reloadGoogleSheets(); // Blocking operation, this can take up to a few seconds!
+        });
 
         Path recordsPath;
         try {
@@ -98,8 +100,8 @@ public class StatsPlugin {
         UpdateUtil.checkForUpdatesAndUpdate(true);
 
         statsGUI = new StatsGUI();
-        JingleGUI.addPluginTab("Stats", statsGUI);
-        JingleGUI.get().registerQuickActionButton(10000, () -> statsGUI.getStartANewSessionButton());
+        JingleGUI.addPluginTab("Stats", statsGUI.getMainPanel());
+        JingleGUI.get().registerQuickActionButton(0, () -> statsGUI.createStartNewSessionButton());
     }
 
     public static void log(Level level, String message) {
