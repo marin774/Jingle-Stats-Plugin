@@ -2,8 +2,8 @@ package me.marin.statsplugin.gui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import lombok.Getter;
 import me.marin.statsplugin.util.StatsPluginUtil;
-import me.marin.statsplugin.io.OldRecordBopperRunnable;
 import me.marin.statsplugin.io.StatsPluginSettings;
 import me.marin.statsplugin.stats.Session;
 import me.marin.statsplugin.util.UpdateUtil;
@@ -28,8 +28,8 @@ public class StatsGUI extends JPanel {
     private JButton openGoogleSheetButton;
     private JButton openStatsBrowserButton;
     private JButton reloadSettingsButton;
-    private JButton clearSpeedrunIGTRecordsButton;
     private JButton OBSOverlayButton;
+    @Getter
     private JButton startANewSessionButton;
     private JPanel setupPanel;
     private JPanel settingsPanel;
@@ -101,7 +101,7 @@ public class StatsGUI extends JPanel {
             if (!connected) {
                 JOptionPane.showMessageDialog(null, "Could not connect to Google Sheets. Check Jingle logs for help.");
             } else {
-                JOptionPane.showMessageDialog(null, "Connected to Google Sheets!");
+                JOptionPane.showMessageDialog(null, "Connection to Google Sheets successful!");
             }
         });
 
@@ -110,11 +110,6 @@ public class StatsGUI extends JPanel {
             updateGUI();
             log(Level.INFO, "Reloaded settings.");
             JOptionPane.showMessageDialog(null, "Reloaded settings.");
-        });
-
-        clearSpeedrunIGTRecordsButton.addActionListener(a -> {
-            new Thread(new OldRecordBopperRunnable(), "old-record-bopper").start();
-            JOptionPane.showMessageDialog(null, "Clearing records, check Jingle logs for more information.");
         });
 
         OBSOverlayButton.addActionListener(a -> {
@@ -217,40 +212,34 @@ public class StatsGUI extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(settingsPanel, gbc);
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(3, 2, new Insets(5, 0, 5, 0), -1, -1));
+        panel2.setLayout(new GridLayoutManager(2, 3, new Insets(5, 0, 5, 0), -1, -1));
         settingsPanel.add(panel2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        openGoogleSheetButton = new JButton();
-        openGoogleSheetButton.setText("Open Google Sheet");
-        openGoogleSheetButton.setVisible(true);
-        panel2.add(openGoogleSheetButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        openStatsBrowserButton = new JButton();
-        openStatsBrowserButton.setText("View Stats in browser");
-        openStatsBrowserButton.setVisible(true);
-        panel2.add(openStatsBrowserButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         OBSOverlayButton = new JButton();
         OBSOverlayButton.setText("Configure OBS overlay");
         panel2.add(OBSOverlayButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        clearSpeedrunIGTRecordsButton = new JButton();
-        clearSpeedrunIGTRecordsButton.setText("Clear SpeedrunIGT records");
-        panel2.add(clearSpeedrunIGTRecordsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("Utility:");
-        panel2.add(label2, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        openStatsBrowserButton = new JButton();
+        openStatsBrowserButton.setText("View stats");
+        openStatsBrowserButton.setVisible(true);
+        panel2.add(openStatsBrowserButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        openGoogleSheetButton = new JButton();
+        openGoogleSheetButton.setText("Open Google Sheet");
+        openGoogleSheetButton.setVisible(true);
+        panel2.add(openGoogleSheetButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel3.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
         settingsPanel.add(panel3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("Debug:");
         panel3.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         startANewSessionButton = new JButton();
         startANewSessionButton.setText("Start a new session");
-        panel3.add(startANewSessionButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel3.add(startANewSessionButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         reconnectToGoogleSheetsButton = new JButton();
-        reconnectToGoogleSheetsButton.setText("Reconnect to Google Sheets");
-        panel3.add(reconnectToGoogleSheetsButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        reloadSettingsButton = new JButton();
-        reloadSettingsButton.setText("Reload settings");
-        panel3.add(reloadSettingsButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        reconnectToGoogleSheetsButton.setText("Test GSheets connection");
+        panel3.add(reconnectToGoogleSheetsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(2, 1, new Insets(5, 0, 5, 0), -1, -1));
         settingsPanel.add(panel4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -273,6 +262,9 @@ public class StatsGUI extends JPanel {
         simulateOfflineCheckbox.setText("Simulate offline?");
         simulateOfflineCheckbox.setVisible(false);
         panel5.add(simulateOfflineCheckbox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        reloadSettingsButton = new JButton();
+        reloadSettingsButton.setText("Reload settings");
+        panel5.add(reloadSettingsButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
