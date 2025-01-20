@@ -94,10 +94,10 @@ public class RSGAttemptsWatcher extends FileWatcher {
 
         if (isWallActive) {
             long delta = Math.max(0, atumResets - previousAtumResets);
-            wallResetsSincePrev += (int) delta;
             if (delta > 1000) {
                 delta = 1; // prevent messing up stats if file is manually edited.
             }
+            wallResetsSincePrev += (int) delta;
             tryLog(Level.DEBUG, "Wall resets +" + delta + " (" + wallResetsSincePrev + " total).", atumResets);
         }
         previousAtumResets = atumResets;
