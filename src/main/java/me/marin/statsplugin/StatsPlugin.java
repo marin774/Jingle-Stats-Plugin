@@ -101,6 +101,7 @@ public class StatsPlugin {
 
         statsGUI = new StatsGUI();
         JingleGUI.addPluginTab("Stats", statsGUI.getMainPanel());
+        JingleGUI.get().registerQuickActionButton(0, () -> statsGUI.createToggleTrackerButton());
         JingleGUI.get().registerQuickActionButton(0, () -> statsGUI.createStartNewSessionButton());
     }
 
