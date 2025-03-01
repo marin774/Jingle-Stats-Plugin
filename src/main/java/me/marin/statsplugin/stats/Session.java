@@ -40,6 +40,10 @@ public class Session {
         if (Double.isNaN(rpe)) {
             rpe = 0;
         }
+        double spp = calculateSeedsPlayed();
+        if (Double.isNaN(spp)) {
+            spp = 0;
+        }
 
         try {
             String template = new String(Files.readAllBytes(OBS_OVERLAY_TEMPLATE_PATH), StandardCharsets.UTF_8);
@@ -47,6 +51,7 @@ public class Session {
             template = template.replaceAll("%nph%", String.format(Locale.US, "%.1f", nph));
             template = template.replaceAll("%average%", StatsPluginUtil.formatTime((long)average, false));
             template = template.replaceAll("%rpe%", String.format(Locale.US, "%.0f", rpe));
+            template = template.replaceAll("%seeds_played%", String.format(Locale.US, "%.1f%%", 100 * spp));
 
             log(Level.DEBUG, "Setting overlay to:\n" + template);
             Files.write(OBS_OVERLAY_PATH, template.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -97,6 +102,18 @@ public class Session {
             resets += Long.parseLong(record.playedSincePrev());
         }
         return (double) resets / enters;
+    }
+
+    public double calculateSeedsPlayed() {
+        long totalPlayed = records.size();
+        long resets = records.size();
+        for (StatsRecord record : records) {
+            totalPlayed += Long.parseLong(record.playedSincePrev());
+
+            resets += Long.parseLong(record.playedSincePrev());
+            resets += Long.parseLong(record.wallResetsSincePrev());
+        }
+        return (double) totalPlayed / resets;
     }
 
     public StatsRecord getLatestRecord() {
