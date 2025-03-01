@@ -47,10 +47,10 @@ public class VersionUtil {
 
         plugins.forEach(pair -> {
             PluginManager.JinglePluginData data = pair.getRight();
-            if (data.id.equals("jingle-stats-plugin")) { // old id with broken gradle version
+            /*if (data.id.equals("jingle-stats-plugin")) { // old id with broken gradle version
                 temp_forceDeleteBrokenJar(pair.getLeft());
                 return;
-            }
+            }*/
             if (!data.id.equals("jingle_stats_plugin")) {
                 return;
             }
@@ -69,6 +69,7 @@ public class VersionUtil {
         });
     }
 
+    /*
     private static void temp_forceDeleteBrokenJar(Path path) {
         Path javaExe = Paths.get(System.getProperty("java.home")).resolve("bin").resolve("javaw.exe");
 
@@ -93,6 +94,7 @@ public class VersionUtil {
 
         System.exit(0);
     }
+     */
 
     private static void deletePluginJar(Path path) {
         try {
