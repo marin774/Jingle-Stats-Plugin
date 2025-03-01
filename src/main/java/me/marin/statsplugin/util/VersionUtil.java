@@ -1,19 +1,14 @@
 package me.marin.statsplugin.util;
 
-import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
-import xyz.duncanruns.jingle.Jingle;
-import xyz.duncanruns.jingle.JingleAppLaunch;
 import xyz.duncanruns.jingle.plugin.PluginManager;
 import xyz.duncanruns.jingle.util.ExceptionUtil;
-import xyz.duncanruns.jingle.util.PowerShellUtil;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +18,7 @@ import static me.marin.statsplugin.StatsPlugin.log;
 
 public class VersionUtil {
 
-    public static final Version CURRENT_VERSION = new Version(1, 1, 2);
+    public static final Version CURRENT_VERSION = new Version(1, 1, 3);
 
     public static Version version(String version) {
         String[] parts = version.split("\\.");
