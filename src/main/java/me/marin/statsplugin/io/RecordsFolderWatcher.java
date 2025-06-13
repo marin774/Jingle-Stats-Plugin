@@ -50,28 +50,28 @@ public class RecordsFolderWatcher extends FileWatcher {
 
     @Override
     protected void handleFileUpdated(File file) {
-        log(Level.DEBUG, "records> " + file.getName());
+        //log(Level.DEBUG, "records> " + file.getName());
         if (!StatsPluginSettings.getInstance().trackerEnabled) {
             return;
         }
         if (completedRunsRecordIds.contains(file.getName()) || mostRecentRecordIds.contains(file.getName())) {
-            log(Level.DEBUG, "Not saving run because it was already completed/recently updated.");
+            //log(Level.DEBUG, "Not saving run because it was already completed/recently updated.");
             return;
         }
 
         JsonObject recordJSON = StatsPluginUtil.readJSON(file);
         if (recordJSON == null || recordJSON.isJsonNull()) {
-            log(Level.DEBUG, "Not saving run because record is null.");
+            //log(Level.DEBUG, "Not saving run because record is null.");
             return;
         }
 
         RecordParser recordParser = new RecordParser(recordJSON);
         if (!recordParser.validateRSG()) {
-            log(Level.DEBUG, "Not saving run because it's not rsg.");
+            //log(Level.DEBUG, "Not saving run because it's not rsg.");
             return;
         }
         if (recordParser.getRTA() - recordParser.getIGT() > ONE_HOUR_MS) {
-            log(Level.DEBUG, "Not saving run because it happened too long ago.");
+            //log(Level.DEBUG, "Not saving run because it happened too long ago.");
             return;
         }
 
@@ -81,7 +81,7 @@ public class RecordsFolderWatcher extends FileWatcher {
             finalRTA = LAN;
         }
 
-        log(Level.DEBUG, "records> finalRTA " + finalRTA);
+        //log(Level.DEBUG, "records> finalRTA " + finalRTA);
 
         // wall time calculation
         for (RSGAttemptsWatcher attemptsWatcher : InstanceManagerRunnable.instanceWatcherMap.values()) {
@@ -91,11 +91,11 @@ public class RecordsFolderWatcher extends FileWatcher {
             attemptsWatcher.reset();
         }
 
-        log(Level.DEBUG, "records> read from attempts watcher");
+        //log(Level.DEBUG, "records> read from attempts watcher");
 
         if (finalRTA == 0) {
             // wallResetsSincePrev++;
-            log(Level.DEBUG, "final rta = 0, skipping");
+            //log(Level.DEBUG, "final rta = 0, skipping");
             return;
         }
 
@@ -107,13 +107,13 @@ public class RecordsFolderWatcher extends FileWatcher {
         RTADistribution += finalRTA/1000 + "$";
 
         if (!recordParser.hasDoneAnySplit()) {
-            log(Level.DEBUG, "Not saving run because it has no splits. (" + finalRTA + "ms rta)");
+            //log(Level.DEBUG, "Not saving run because it has no splits. (" + finalRTA + "ms rta)");
             splitlessResets++;
             RTASincePrev += finalRTA;
             return;
         }
 
-        log(Level.DEBUG, "Done splits: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
+        //log(Level.DEBUG, "Done splits: " + recordParser.hasObtainedIron() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.hasObtainedWood() + ", " + recordParser.getTimelinesMap());
 
         String date = DATETIME_FORMATTER.format(Instant.ofEpochMilli(recordParser.getDate()));
         Map<String, Long> timelines = recordParser.getTimelinesMap();

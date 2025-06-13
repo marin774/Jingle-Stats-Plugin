@@ -28,7 +28,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
         super("rsg-attempts-watcher", atumDirectory.toFile());
         this.wpStateoutPath = wpStateoutPath;
 
-        log(Level.DEBUG, "rsg-attempts.txt watcher is running...");
+        //log(Level.DEBUG, "rsg-attempts.txt watcher is running...");
         previousAtumResets = getAtumResets();
     }
 
@@ -90,7 +90,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
         if (atumResets < 0 || atumResets == previousAtumResets) {
             return;
         }
-        tryLog(Level.DEBUG, "Resets: " + atumResets + ", state: " + state, atumResets);
+        //tryLog(Level.DEBUG, "Resets: " + atumResets + ", state: " + state, atumResets);
 
         if (isWallActive) {
             long delta = Math.max(0, atumResets - previousAtumResets);
@@ -98,7 +98,7 @@ public class RSGAttemptsWatcher extends FileWatcher {
                 delta = 1; // prevent messing up stats if file is manually edited.
             }
             wallResetsSincePrev += (int) delta;
-            tryLog(Level.DEBUG, "Wall resets +" + delta + " (" + wallResetsSincePrev + " total).", atumResets);
+            //tryLog(Level.DEBUG, "Wall resets +" + delta + " (" + wallResetsSincePrev + " total).", atumResets);
         }
         previousAtumResets = atumResets;
 
@@ -110,10 +110,10 @@ public class RSGAttemptsWatcher extends FileWatcher {
             if (isWallActive) {
                 if (delta > StatsPluginSettings.getInstance().breakThreshold * 1000L) {
                     breakRTASincePrev += delta;
-                    tryLog(Level.DEBUG, "Break RTA +" + delta + "ms (" + breakRTASincePrev + "ms total).", atumResets);
+                    //tryLog(Level.DEBUG, "Break RTA +" + delta + "ms (" + breakRTASincePrev + "ms total).", atumResets);
                 } else {
                     wallTimeSincePrev += delta;
-                    tryLog(Level.DEBUG, "Wall time since prev. +" + delta + "ms (" + wallTimeSincePrev + "ms total).", atumResets);
+                    //tryLog(Level.DEBUG, "Wall time since prev. +" + delta + "ms (" + wallTimeSincePrev + "ms total).", atumResets);
                 }
             }
         }
