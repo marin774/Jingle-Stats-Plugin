@@ -172,7 +172,6 @@ public class SetupGUI extends JFrame {
             StringSelection stringSelection = new StringSelection(gcEmail);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
-            JOptionPane.showMessageDialog(null, "Copied email to clipboard.");
         });
 
         backButton.addActionListener(a -> {

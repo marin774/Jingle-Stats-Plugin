@@ -51,7 +51,6 @@ public class OBSOverlayGUI extends JFrame {
             StringSelection stringSelection = new StringSelection(OBS_OVERLAY_PATH.toAbsolutePath().toString());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
-            JOptionPane.showMessageDialog(null, "Copied to clipboard.");
         });
         try {
             overlayFormatTextArea.setText(new String(Files.readAllBytes(OBS_OVERLAY_TEMPLATE_PATH), StandardCharsets.UTF_8));
