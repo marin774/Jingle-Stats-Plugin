@@ -18,10 +18,10 @@ Depending on what you did during setup, this menu might look different.
 ![image](https://github.com/user-attachments/assets/6225ae84-4906-4f4f-960e-d8569258186d)
 
 ### Utility:
-- **Configure OBS overlay** - has `%enters%`, `%nph%`, `%rpe%` and `%average%` variables, you can format it in any way
+- **Configure OBS overlay** - has `%enters%`, `%nph%`, `%rpe%`, `%average%` and `%seeds_played%` variables
 ![image](https://github.com/user-attachments/assets/8e57a790-f533-416e-a25b-c4e9d5eaf433)
 
-- **View Stats** - opens [Specnr's Reset Analytics Website](https://reset-analytics-dev.vercel.app/) with your stats.
+- **View Stats** - opens [Specnr's Reset Analytics Website](https://reset-analytics-dev.vercel.app/) with your stats
 - **Open Google Sheet** - opens your stats Google Sheet
 
 ### Debug:
@@ -35,14 +35,12 @@ Depending on what you did during setup, this menu might look different.
 
 ## Quick Action Buttons
 
+- **Enable/Disable Stats** - enables/disables the tracker
 - **Start new session** - starts a new session (0 nethers, 0:00 average, 0 nph) with your next run
   
-![image](https://github.com/user-attachments/assets/f4d020ec-f491-478a-89bd-86dfd870fc38)
+![image](https://github.com/user-attachments/assets/ee753a2a-6ae8-4cb9-a37a-a6c9e8568e7f)
 
-## Known issues
+
+## Important:
 - SpeedrunIGT 'Make Record' setting has to be set to 'Every run' (and NOT 'Completed Run')
 ![image](https://github.com/marin774/Julti-Stats-Plugin/assets/87690741/50276c61-a03a-470d-b430-731337c4f811)
-
----
-
-#### If you have any questions, contact me on discord @marin774
